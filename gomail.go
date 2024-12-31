@@ -51,19 +51,17 @@ func (m *GoMail) sendText(message string) error {
 	//TODO: add back subject if necessary
 	//also could send multiple messages if longer than
 	body := message
-	if len(message) > 159 {
-		body = message[0:159]
+	if len(message) > 150 {
+		body = message[0:150]
 	}
 
 	auth := smtp.PlainAuth("", m.fromAddress, m.password, m.smtpHost)
 
 	err := smtp.SendMail(m.smtpHost+":"+m.smtpPort, auth, m.fromAddress, []string{m.toAddress}, []byte(body))
 	if err != nil {
-		fmt.Println("Error sending email:", err)
-		return err
+		return fmt.Errorf("error sending text: %v", err)
 	}
 
-	fmt.Println("text sent successfully!")
 	return nil
 }
 
@@ -77,10 +75,8 @@ func (m *GoMail) sendEmail(message string) error {
 	// Send the email
 	err := smtp.SendMail(m.smtpHost+":"+m.smtpPort, auth, m.fromAddress, []string{m.toAddress}, body)
 	if err != nil {
-		fmt.Println("Error sending email:", err)
-		return err
+		return fmt.Errorf("error sending email: %v", err)
 	}
 
-	fmt.Println("Email sent successfully!")
 	return nil
 }
