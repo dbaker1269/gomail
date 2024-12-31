@@ -15,41 +15,27 @@ type GoMail struct {
 	password    string
 }
 
-func NewGoMail() GoMail {
-	var goMail GoMail
-	frmAddress := os.Getenv("FROMADDRESS")
+func NewGoMail() (*GoMail, error) {
+
+	fromAddress := os.Getenv("FROMADDRESS")
 	toAddress := os.Getenv("TOADDRESS")
 	smtpHost := os.Getenv("SMTPHOST")
 	smtpPort := os.Getenv("SMTPPORT")
 	password := os.Getenv("PASSWORD")
 
-	if frmAddress != "" {
-		goMail.fromAddress = frmAddress
-	} else {
-		goMail.fromAddress = "dbaker1269@gmail.com"
+	if fromAddress == "" || toAddress == "" || smtpHost == "" || smtpPort == "" || password == "" {
+		return nil, fmt.Errorf("invalid environment variables. ")
 	}
-	if toAddress != "" {
-		goMail.toAddress = toAddress
-	} else {
-		//goMail.toAddress = "dbaker1269@gmail.com"
-		goMail.toAddress = "4028025057@vtext.com"
+
+	goMail := &GoMail{
+		fromAddress: fromAddress,
+		toAddress:   toAddress,
+		smtpHost:    smtpHost,
+		smtpPort:    smtpPort,
+		password:    password,
 	}
-	if smtpHost != "" {
-		goMail.smtpHost = smtpHost
-	} else {
-		goMail.smtpHost = "smtp.gmail.com"
-	}
-	if smtpPort != "" {
-		goMail.smtpPort = smtpPort
-	} else {
-		goMail.smtpPort = "587"
-	}
-	if password != "" {
-		goMail.password = password
-	} else {
-		goMail.password = "raetpgjrdpysvlzf"
-	}
-	return goMail
+
+	return goMail, nil
 }
 
 func (m *GoMail) SendNotification(message string) error {
